@@ -2,6 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTime>
+
+#include "paintwidget.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +21,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    PaintWidget paintwidget;
+    QTime execTimer;
+    bool isRunning = false;
 };
 
 #endif // MAINWINDOW_H
