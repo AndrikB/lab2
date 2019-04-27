@@ -27,7 +27,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     PaintWidget paintwidget;
-    int *array;
+    int *array=Q_NULLPTR;
+    int size;
     QTime execTimer;
     bool isRunning = false;
     enum iteration{next, prev};

@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->lyPainter->addWidget(&paintwidget);
+
+    size=142;
+    on_shuffle_btn_clicked();
 }
 
 MainWindow::~MainWindow()
@@ -20,14 +23,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_shuffle_btn_clicked()
 {
     qDebug()<<"start shuffle";
-
     if (array)
     {
         delete array;
     }
-    int size=142;
     array=new int [static_cast<unsigned long long>(size)];
-
 
     for (int i=0;i<size;i++) //todo norm init
     {
@@ -40,6 +40,8 @@ void MainWindow::on_shuffle_btn_clicked()
         swap(i, rand);
     }
     qDebug()<<"end shuffle";
+
+    paintwidget.visualize(size, array);
 
     //todo sort
 }
@@ -55,12 +57,15 @@ void MainWindow::on_next_btn_clicked()
 {
     read_iteration(next);
 
-    paintwidget.visualize(array)
+    paintwidget.visualize(size, array);
 }
 
-void MainWindow::read_iteration(MainWindow::iteration next_or_prev)
+void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 {
-    qDebug()<<next_or_prev;
+    if (next_or_prev==next)
+    {
+
+    }
 
 }
 
