@@ -27,13 +27,14 @@ void PaintWidget::paintEvent(QPaintEvent *)
     QPainter painter(this);
 
     int penWidth=this->width()/size;
-    //pen.setWidth()
+    pen.setWidth(penWidth);
+
     for (int i=0;i<size;i++)
     {
         painter.setPen(pen);
 
-        painter.drawLine((i-1)*penWidth, this->height(),
-                         (i-1)*penWidth, this->height() - array[i]);
+        painter.drawLine((i)*penWidth, this->height(),
+                         (i)*penWidth, this->height() - array[i]);
     }
 
 }
