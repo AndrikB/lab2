@@ -2,12 +2,18 @@
 #define PAINTWIDGET_H
 
 #include <QWidget>
+#include <QColor>
+#include <QPainter>
 
-class PaintWidget : public QWidget
+const QColor defaultLineColor = Qt::lightGray;
+const QColor defaultBgColor = Qt::black;
+
+class PaintWidget   : public QWidget
 {
     Q_OBJECT
 public:
     explicit PaintWidget(QWidget *parent = nullptr);
+    void visualize(int *array, int red=-1, int yelow=-1);
 
 signals:
 

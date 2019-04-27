@@ -47,7 +47,7 @@
       <item row="0" column="1">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="2">
-         <widget class="QPushButton" name="Shuffle_btn">
+         <widget class="QPushButton" name="shuffle_btn">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
