@@ -24,13 +24,13 @@ private slots:
 
     void on_shuffle_btn_clicked();
 
+    void on_back_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
     PaintWidget paintwidget;
     int *array=Q_NULLPTR;
     int size;
-    QTime execTimer;
-    bool isRunning = false;
     enum iteration{next, prev};
 
     void swap (int i, int j);

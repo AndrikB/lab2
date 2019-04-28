@@ -27,11 +27,12 @@ void MainWindow::on_shuffle_btn_clicked()
     {
         delete array;
     }
+    size=ui->count_items_spin->value();
     array=new int [static_cast<unsigned long long>(size)];
 
     for (int i=0;i<size;i++) //todo norm init
     {
-        array[i]=i;
+        array[i]=i+1;
     }
 
     for (int i=0; i <size; ++i)
@@ -41,7 +42,7 @@ void MainWindow::on_shuffle_btn_clicked()
     }
     qDebug()<<"end shuffle";
 
-    paintwidget.visualize(size, array);
+    paintwidget.visualize(size, array, 2,50);
 
     //todo sort
 }
@@ -60,6 +61,13 @@ void MainWindow::on_next_btn_clicked()
     paintwidget.visualize(size, array);
 }
 
+void MainWindow::on_back_btn_clicked()
+{
+    read_iteration(prev);
+
+    paintwidget.visualize(size, array);
+}
+
 void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 {
     if (next_or_prev==next)
@@ -68,4 +76,5 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
     }
 
 }
+
 
