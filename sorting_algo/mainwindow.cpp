@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->lyPainter->addWidget(&paintwidget);
 
-    size=142;
     on_shuffle_btn_clicked();
 }
 
@@ -30,7 +29,7 @@ void MainWindow::on_shuffle_btn_clicked()
     size=ui->count_items_spin->value();
     array=new int [static_cast<unsigned long long>(size)];
 
-    for (int i=0;i<size;i++) //todo norm init
+    for (int i=0;i<size;i++)
     {
         array[i]=i+1;
     }
