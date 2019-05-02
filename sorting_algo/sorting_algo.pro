@@ -27,11 +27,13 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    paintwidget.cpp
+    paintwidget.cpp \
+    sorting.cpp
 
 HEADERS += \
         mainwindow.h \
-    paintwidget.h
+    paintwidget.h \
+    sorting.h
 
 FORMS += \
         mainwindow.ui
