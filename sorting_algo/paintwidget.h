@@ -17,6 +17,7 @@ public:
     void visualize(int size, int *array, int red=-1, int yelow=-1);
 
 signals:
+    void setFullScreen();
 
 public slots:
 

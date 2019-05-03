@@ -2,15 +2,23 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QRandomGenerator>
+#include <QApplication>
+#include <QDesktopWidget>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     ui->lyPainter->addWidget(&paintwidget);
+    QSize display=QApplication::desktop()->screenGeometry().size();
+
+    ui->count_items_spin->setMaximum(qMin(display.width()/2, display.height()-200));
+    ui->count_items_slider->setMaximum(qMin(display.width()/2, display.height()-200));
 
     on_shuffle_btn_clicked();
+
 }
 
 MainWindow::~MainWindow()
@@ -56,7 +64,6 @@ void MainWindow::swap(int i, int j)
 void MainWindow::on_next_btn_clicked()
 {
     read_iteration(next);
-
     paintwidget.visualize(size, array);
 }
 

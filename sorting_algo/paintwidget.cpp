@@ -1,5 +1,8 @@
 #include "paintwidget.h"
 #include <QDebug>
+#include <QApplication>
+#include <QDesktopWidget>
+#include "mainwindow.h"
 
 PaintWidget::PaintWidget(QWidget *parent) : QWidget(parent)
 {
@@ -22,8 +25,18 @@ void PaintWidget::visualize(int size, int *array, int red, int yelow)//todo
     this->array=array;
     this->red=red;
     this->yelow=yelow;
+    QSize display=QApplication::desktop()->screenGeometry().size();
+
     this->setMinimumHeight(qMax(size, 50));
-    this->setMinimumWidth(size*2);
+    this->setMinimumWidth(size*2+1);
+
+    if (display.height()-250<size)
+    {
+        MainWindow *mainwindow=static_cast<MainWindow*>(parent()->parent());
+        if (!mainwindow->isMaximized()) mainwindow->move(0,0);//todo set in center of screen(for all)
+        mainwindow->showMaximized();
+    }
+
 
     this->update();
 
