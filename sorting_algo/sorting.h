@@ -1,13 +1,32 @@
 #ifndef SORTING_H
 #define SORTING_H
+#include <QObject>
 #include<QVector>
 #include<QPair>
 
-class Sorting
+class Sorting :public QObject
 {
+    Q_OBJECT
 public:
     Sorting();
-    QVector<QPair<QPair<int,int>,int>> BubbleSort(QList<int> &numbers);
+    static int* shuffle(int *arr,int size);
+    QStringList get_algorithms(){return algorithms;}
+    void start_sort(QString name_algorithms,int *arr,int size);
+
+signals:
+    void nextIteration(int i,int j,bool swap);
+    void nextIteration(int *arr,int size);
+
+private:
+    QStringList algorithms={"Bubble sort","Bogosort","Selection sort","Insertion sort"};
+    bool isSorted(int *arr,int size);
+
+    //----------sorting algorithms--------------//
+    void BubbleSort(int *arr,int size);
+    void BogoSort(int *arr,int size);
+    void SelectionSort(int *arr,int size);
+    void InsertionSort(int *arr,int size);
+
 };
 
 #endif // SORTING_H
