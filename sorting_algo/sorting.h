@@ -15,7 +15,7 @@ public:
 
 signals:
     void nextIteration(int i,int j,bool swap);
-    void nextIteration(int *arr,int size);
+    void nextIteration(int *arr);
 
 private:
     QStringList algorithms={"Bubble sort","Bogosort","Selection sort","Insertion sort"};

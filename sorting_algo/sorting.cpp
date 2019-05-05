@@ -63,7 +63,7 @@ void Sorting::BogoSort(int *arr, int size)
     while (!isSorted(arr,size))
     {
         arr=shuffle(arr,size);
-        emit nextIteration(arr,size);
+        emit nextIteration(arr);
     }
 }
 

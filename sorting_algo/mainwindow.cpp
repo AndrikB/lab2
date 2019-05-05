@@ -13,9 +13,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lyPainter->addWidget(&paintwidget);
     QSize display=QApplication::desktop()->screenGeometry().size();
-
     ui->count_items_spin->setMaximum(qMin(display.width()/2, display.height()-200));
     ui->count_items_slider->setMaximum(qMin(display.width()/2, display.height()-200));
+
+    f1.setFileName("filename.txt");
+    ui->Algos_combobox->addItems(sorting.get_algorithms());
+    ui->Algos_combobox->setCurrentIndex(0);
+    connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(create_algo_steps(QString)));
 
     on_shuffle_btn_clicked();
 
@@ -41,24 +45,54 @@ void MainWindow::on_shuffle_btn_clicked()
     {
         array[i]=i+1;
     }
+    array=Sorting::shuffle(array, size);
 
-    for (int i=0; i <size; ++i)
-    {
-        int rand = QRandomGenerator::global()->bounded(0,size);
-        swap(i, rand);
-    }
     qDebug()<<"end shuffle";
 
     paintwidget.visualize(size, array, 2,50);
 
-    //todo sort
+
+    create_algo_steps(ui->Algos_combobox->currentText());
+
 }
 
-void MainWindow::swap(int i, int j)
+void MainWindow::change_display_location()
 {
-    int tmp = array[i];
-    array[i] = array[j];
-    array[j] = tmp;
+    QSize display=QApplication::desktop()->screenGeometry().size();
+    if ((this->pos().x()+this->width()>=0.9*display.width())||
+        (this->pos().y()+this->height()>=0.9*display.height())){
+        if (!this->isMaximized())this->move(0,0);
+    }
+
+    if ((0.8*display.height())<=this->height())
+    {
+        if (!this->isMaximized()) this->move(0,0);//todo set in center of screen(for all)
+        this->showMaximized();
+    }
+}
+
+void MainWindow::create_algo_steps(QString algoname)
+{
+    if (algoname=="Bogosort"){
+        f1.open(QIODevice::Append,QIODevice::WriteOnly);
+        connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
+    }
+    else
+        connect(&sorting, SIGNAL(nextIteration(int, int, bool)), this, SLOT(nextIteration(int, int, bool)));
+
+    sorting.start_sort(algoname, array, size);
+    f1.close();
+
+}
+
+void MainWindow::nextIteration(int *array)
+{
+
+}
+
+void MainWindow::nextIteration(int i, int j, bool swap)
+{
+
 }
 
 void MainWindow::on_next_btn_clicked()
@@ -76,10 +110,15 @@ void MainWindow::on_back_btn_clicked()
 
 void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 {
-    if (next_or_prev==next)
-    {
+    if (ui->Algos_combobox->currentText()=="Bogosort")
+        if (next_or_prev==next)
+        {
 
-    }
+        }
+        else
+        {
+
+        }
 
 }
 

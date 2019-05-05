@@ -3,8 +3,10 @@
 
 #include <QMainWindow>
 #include <QTime>
+#include <QFile>
 
 #include "paintwidget.h"
+#include "sorting.h"
 
 
 namespace Ui {
@@ -17,6 +19,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    void change_display_location();
     ~MainWindow();
 
 private slots:
@@ -25,14 +28,22 @@ private slots:
     void on_shuffle_btn_clicked();
 
     void on_back_btn_clicked();
+
+    void create_algo_steps(QString algoname);
+    void nextIteration(int* array);
+    void nextIteration(int i, int j, bool swap);
+
 private:
     Ui::MainWindow *ui;
     PaintWidget paintwidget ;
+    Sorting sorting;
+
     int *array=Q_NULLPTR;
     int size;
     enum iteration{next, prev};
 
-    void swap (int i, int j);
+
+    QFile f1;
     void read_iteration(iteration next_or_prev);
 };
 
