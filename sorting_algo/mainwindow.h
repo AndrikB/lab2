@@ -48,7 +48,9 @@ private:
 
 
     std::ofstream f1;
+    bool is_reading=false;//true - it is vizualization
     void read_iteration(iteration next_or_prev);
+    void stop_writing();
 };
 
 #endif // MAINWINDOW_H
