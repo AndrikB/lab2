@@ -1,9 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <iostream>
+#include <fstream>
+
 #include <QMainWindow>
 #include <QTime>
 #include <QFile>
+#include <QTextStream>
 
 #include "paintwidget.h"
 #include "sorting.h"
@@ -43,7 +47,7 @@ private:
     enum iteration{next, prev};
 
 
-    QFile f1;
+    std::ofstream f1;
     void read_iteration(iteration next_or_prev);
 };
 

@@ -16,10 +16,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->count_items_spin->setMaximum(qMin(display.width()/2, display.height()-200));
     ui->count_items_slider->setMaximum(qMin(display.width()/2, display.height()-200));
 
-    f1.setFileName("filename.txt");
     ui->Algos_combobox->addItems(sorting.get_algorithms());
     ui->Algos_combobox->setCurrentIndex(0);
     connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(create_algo_steps(QString)));
+
+    connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
+    connect(&sorting, SIGNAL(nextIteration(int, int, bool)), this, SLOT(nextIteration(int, int, bool)));
 
     on_shuffle_btn_clicked();
 
@@ -73,36 +75,51 @@ void MainWindow::change_display_location()
 
 void MainWindow::create_algo_steps(QString algoname)
 {
+    f1.close();
+    f1.open("myfile.txt", std::ios::binary|std::ios::trunc);
+
     if (algoname=="Bogosort"){
-        f1.open(QIODevice::Append,QIODevice::WriteOnly);
-        connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
+
     }
-    else
-        connect(&sorting, SIGNAL(nextIteration(int, int, bool)), this, SLOT(nextIteration(int, int, bool)));
+    else{
+        //f1.open(QIODevice::Append,QIODevice::WriteOnly);
+
+    }
 
     sorting.start_sort(algoname, array, size);
-    f1.close();
+
 
 }
 
 void MainWindow::nextIteration(int *array)
 {
-
+    f1.write((char*)&array, sizeof (array));
 }
 
 void MainWindow::nextIteration(int i, int j, bool swap)
 {
+    f1.write((char*)&i, sizeof (int));
+    f1.write((char*)&j, sizeof (int));
+    f1.write((char*)&swap, sizeof (int));
+}
 
+void MainWindow::stop_writing()
+{
+    is_reading=true;
+    f1.close();
+    f1.open("myfile.txt", std::ios::binary);
 }
 
 void MainWindow::on_next_btn_clicked()
 {
+    if (!is_reading)stop_writing();
     read_iteration(next);
     paintwidget.visualize(size, array);
 }
 
 void MainWindow::on_back_btn_clicked()
 {
+    if (!is_reading)stop_writing();//todo this for start(mb)
     read_iteration(prev);
 
     paintwidget.visualize(size, array);
@@ -120,6 +137,17 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 
         }
 
+    else
+    {
+        if (next_or_prev==next)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
 }
 
 
