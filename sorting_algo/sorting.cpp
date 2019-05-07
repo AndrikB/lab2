@@ -12,23 +12,26 @@ Sorting::Sorting()
 
 }
 
-void Sorting::start_sort(QString name_algorithms, int *arr, int size)
+void Sorting::start_sort(QString name_algorithms, const int *arr, int size)
 {
+    int *array=new int[static_cast<unsigned long long>(size)];
+    for (int i=0;i<size;i++)
+        array[i]=arr[i];
     if (name_algorithms=="Bubble sort")
     {
-        BubbleSort(arr,size);
+        BubbleSort(array,size);
     }
     else if (name_algorithms=="Bogosort")
     {
-        BogoSort(arr,size);
+        BogoSort(array,size);
     }
     else if (name_algorithms=="Selection sort")
     {
-        SelectionSort(arr,size);
+        SelectionSort(array,size);
     }
     else if (name_algorithms=="Insertion sort")
     {
-        InsertionSort(arr,size);
+        InsertionSort(array,size);
     }
 }
 

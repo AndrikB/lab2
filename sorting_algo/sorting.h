@@ -11,7 +11,7 @@ public:
     Sorting();
     static int* shuffle(int *arr,int size);
     QStringList get_algorithms(){return algorithms;}
-    void start_sort(QString name_algorithms,int *arr,int size);
+    void start_sort(QString name_algorithms,const int *arr,int size);
 
 signals:
     void nextIteration(int i,int j,bool swap);

@@ -1,9 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <iostream>
-#include <fstream>
-
 #include <QMainWindow>
 #include <QTime>
 #include <QFile>
@@ -47,7 +44,8 @@ private:
     enum iteration{next, prev};
 
 
-    std::ofstream f1;
+    QFile f1;
+    QTextStream *str;
     bool is_reading=false;//true - it is vizualization
     void read_iteration(iteration next_or_prev);
     void stop_writing();

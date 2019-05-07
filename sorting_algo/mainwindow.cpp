@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
     connect(&sorting, SIGNAL(nextIteration(int, int, bool)), this, SLOT(nextIteration(int, int, bool)));
 
+    f1.setFileName("file.txt");
+
     on_shuffle_btn_clicked();
 
 }
@@ -38,7 +40,7 @@ void MainWindow::on_shuffle_btn_clicked()
     qDebug()<<"start shuffle";
     if (array)
     {
-        delete array;
+        delete[] array;
     }
     size=ui->count_items_spin->value();
     array=new int [static_cast<unsigned long long>(size)];
@@ -76,7 +78,7 @@ void MainWindow::change_display_location()
 void MainWindow::create_algo_steps(QString algoname)
 {
     f1.close();
-    f1.open("myfile.txt", std::ios::binary|std::ios::trunc);
+    f1.open(QFile::WriteOnly|QFile::Truncate);
 
     if (algoname=="Bogosort"){
 
@@ -93,7 +95,10 @@ void MainWindow::create_algo_steps(QString algoname)
 
 void MainWindow::nextIteration(int *array)
 {
+    char *arr=new char[sizeof(array)];
+    //arr=array;
     f1.write((char*)&array, sizeof (array));
+
 }
 
 void MainWindow::nextIteration(int i, int j, bool swap)
@@ -107,7 +112,8 @@ void MainWindow::stop_writing()
 {
     is_reading=true;
     f1.close();
-    f1.open("myfile.txt", std::ios::binary);
+    f1.open(QFile::ReadOnly);
+    str=new QTextStream(&f1);
 }
 
 void MainWindow::on_next_btn_clicked()
@@ -130,7 +136,11 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
     if (ui->Algos_combobox->currentText()=="Bogosort")
         if (next_or_prev==next)
         {
-
+            char* arr=new char[sizeof(array)];
+            qDebug()<<array[0]<<arr[0]<<array[1]<<arr[1];
+            f1.read(arr, sizeof(array));
+            array=(int*)&arr;
+            qDebug()<<array[0]<<arr[0]<<array[1]<<arr[1];
         }
         else
         {
