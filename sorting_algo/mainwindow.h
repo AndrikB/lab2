@@ -45,7 +45,7 @@ private:
 
 
     QFile f1;
-    QTextStream *str;
+    QTextStream *str=Q_NULLPTR;
     bool is_reading=false;//true - it is vizualization
     void read_iteration(iteration next_or_prev);
     void stop_writing();

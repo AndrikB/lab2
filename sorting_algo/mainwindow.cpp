@@ -79,6 +79,9 @@ void MainWindow::create_algo_steps(QString algoname)
 {
     f1.close();
     f1.open(QFile::WriteOnly|QFile::Truncate);
+    if (str) delete str;
+    str=new QTextStream(&f1);
+
 
     if (algoname=="Bogosort"){
 
@@ -95,9 +98,12 @@ void MainWindow::create_algo_steps(QString algoname)
 
 void MainWindow::nextIteration(int *array)
 {
-    char *arr=new char[sizeof(array)];
-    //arr=array;
-    f1.write((char*)&array, sizeof (array));
+    for (int i=0;i<size;i++)
+    {
+        qDebug()<<array[i];
+        *str<<(array[i]);
+
+    }
 
 }
 
@@ -113,6 +119,7 @@ void MainWindow::stop_writing()
     is_reading=true;
     f1.close();
     f1.open(QFile::ReadOnly);
+    delete str;
     str=new QTextStream(&f1);
 }
 
