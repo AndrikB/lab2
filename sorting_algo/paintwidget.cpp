@@ -25,7 +25,7 @@ void PaintWidget::visualize(int size, int *array, int red, int yelow)//todo
     this->array=array;
     this->red=red;
     this->yelow=yelow;
-    QSize display=QApplication::desktop()->screenGeometry().size();
+    //QSize display=QApplication::desktop()->screenGeometry().size();
 
     this->setMinimumHeight(qMax(size, 50));
     this->setMinimumWidth(size*2+1);

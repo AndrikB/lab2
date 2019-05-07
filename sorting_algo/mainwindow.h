@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTime>
+#include <QTimer>
 #include <QFile>
 #include <QTextStream>
 
@@ -34,6 +34,8 @@ private slots:
     void nextIteration(int* array);
     void nextIteration(int i, int j, bool swap);
 
+    void on_Start_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
     PaintWidget paintwidget ;
@@ -45,8 +47,9 @@ private:
 
 
     QFile f1;
-    QTextStream *str=Q_NULLPTR;
+    QTextStream *str;
     bool is_reading=false;//true - it is vizualization
+    QTimer timer;
     void read_iteration(iteration next_or_prev);
     void stop_writing();
 };

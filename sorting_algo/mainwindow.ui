@@ -111,6 +111,12 @@
             <height>23</height>
            </size>
           </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
          </widget>
         </item>
         <item row="0" column="0">
@@ -150,6 +156,12 @@
            <font>
             <pointsize>10</pointsize>
            </font>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
