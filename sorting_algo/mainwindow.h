@@ -49,8 +49,13 @@ private:
     QFile f1;
     QTextStream *str;
     bool is_reading=false;//true - it is vizualization
+
+    bool stage_iteration=false;//false-look; true - swap
+    iteration previous_action=next;
     QTimer timer;
+
     void read_iteration(iteration next_or_prev);
+    void set_line_before(QTextStream* str);
     void stop_writing();
 };
 

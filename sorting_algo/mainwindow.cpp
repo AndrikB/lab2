@@ -38,6 +38,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_shuffle_btn_clicked()
 {
+    is_reading=false;
+    previous_action=next;
+    stage_iteration=false;
     qDebug()<<"start shuffle";
     if (array)
     {
@@ -78,6 +81,7 @@ void MainWindow::create_algo_steps(QString algoname)
 {
     f1.close();
     f1.open(QFile::WriteOnly|QFile::Truncate);
+    f1.putChar('\n');
 
     if (algoname=="Bogosort"&&ui->count_items_spin->maximum()>10){//becouse bogosort it is joke:))))
 
@@ -119,8 +123,9 @@ void MainWindow::nextIteration(int *array)
 void MainWindow::nextIteration(int i, int j, bool swap)
 {
     QTextStream st(&f1);
-    st<<i<<' '<<j<<' '<<false<<endl;
-    st<<i<<' '<<j<<' '<<swap<<endl;
+    //st<<i<<' '<<j<<' '<<false<<endl;
+    //if (swap)
+        st<<i<<' '<<j<<' '<<swap<<endl;
 }
 
 void MainWindow::stop_writing()
@@ -157,49 +162,142 @@ void MainWindow::on_back_btn_clicked()
     if (!is_reading)stop_writing();//todo this for start(mb)
     read_iteration(prev);
 
-    paintwidget.visualize(size, array);
 }
 
 void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 {
+
     if (ui->Algos_combobox->currentText()=="Bogosort"){
         if (next_or_prev==next)
         {
 
             for (int i=0;i<size;i++){
                 *str>>array[i];
-
             }
 
 
         }
         else
         {
+            set_line_before(str);
+            set_line_before(str);
+            for (int i=0;i<size;i++)
+            {
+                *str>>array[i];
+            }
 
+            set_line_before(str);
         }
         paintwidget.visualize(size, array);
     }
     else
     {
+        int i,j, swap;
         if (next_or_prev==next)
         {
-            int i,j, swap;
-            *str>>i>>j>>swap;
-            if (swap){
-                std::swap(array[i], array[j]);
-                //std::swap(i,j);
+            if (previous_action==next)//++
+            {
+                if (!stage_iteration){//now is looking
+                    *str>>i>>j>>swap;
+                    if (swap) stage_iteration=true;
+                }
+                else {//now is swaping
+                    set_line_before(str);
+                    *str>>i>>j>>swap;
+                    std::swap(array[i], array[j]);
+                    stage_iteration=false;
+
+                }
             }
-            paintwidget.visualize(size, array,i,j);
-        }
-        else
-        {
+            else {
+                if (!stage_iteration){//now is looking
+                    *str>>i>>j>>swap;
+                    if (swap) std::swap(array[i], array[j]);
+                    else {
+                        *str>>i>>j>>swap;stage_iteration=swap;
+                        stage_iteration=swap;
+                    }
+                }
+                else {//now is swaping
+                    *str>>i>>j>>swap;
+                    stage_iteration=swap;
+                }
+
+            }
+
 
         }
+        else//prev
+        {
+            if (previous_action==next){//++
+
+                if (!stage_iteration){//now is looking
+
+                    set_line_before(str);
+                    *str>>i>>j>>swap;
+                    qDebug()<<i<<j<<swap;
+                    if (swap) {
+
+                        std::swap(array[i], array[j]);
+                        set_line_before(str);str->seek(str->pos()-1);
+                    }
+                    else {
+                        set_line_before(str);
+                        set_line_before(str);
+                        *str>>i>>j>>swap;
+                        qDebug()<<"new"<<i<<j<<swap;
+                        stage_iteration=swap;
+                        if (!swap) {set_line_before(str);str->seek(str->pos()-1);}
+
+                    }
+                }
+                else {
+                    set_line_before(str);
+                    set_line_before(str);
+                    *str>>i>>j>>swap;
+                    stage_iteration=swap;
+                    if (!swap) {set_line_before(str);str->seek(str->pos()-1);}
+
+                }
+
+
+            }
+            else {
+                if (!stage_iteration){//now is looking
+                    set_line_before(str);
+                    *str>>i>>j>>swap;
+                    if (swap) stage_iteration=true;
+                    else {set_line_before(str);str->seek(str->pos()-1);}
+                }
+                else {//now is swaping
+
+                    set_line_before(str);
+                    *str>>i>>j>>swap;
+                    qDebug()<<"a"<<i<<j<<swap;
+                    std::swap(array[i], array[j]);
+                    stage_iteration=false;
+                    set_line_before(str);str->seek(str->pos()-1);
+                }
+
+            }
+        }
+        paintwidget.visualize(size, array,i,j);
     }
 
-
+    previous_action=next_or_prev;
     str->readLine();
     if (str->atEnd())
         ui->next_btn->setEnabled(false);
+}
+
+void MainWindow::set_line_before(QTextStream *str)
+{
+    str->seek(str->pos()-2);
+    char c;
+    *str>>c;
+    while (c!='\n') {
+        str->seek(str->pos()-2);
+        *str>>c;
+    }
 }
 

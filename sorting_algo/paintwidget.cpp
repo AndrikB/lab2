@@ -30,8 +30,6 @@ void PaintWidget::visualize(int size, int *array, int red, int yelow)//todo
     this->setMinimumHeight(qMax(size, 50));
     this->setMinimumWidth(size*2+1);
 
-
-
     this->update();
 
 }
