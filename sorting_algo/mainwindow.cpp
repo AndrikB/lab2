@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
     connect(&sorting, SIGNAL(nextIteration(int, int, bool)), this, SLOT(nextIteration(int, int, bool)));
     connect(&timer, SIGNAL(timeout()), this, SLOT(on_next_btn_clicked()));
+    connect(ui->AnimSpeed_spin, SIGNAL(valueChanged(int)), this, SLOT(change_speed(int)));
 
     f1.setFileName("file.txt");
 
@@ -41,7 +42,9 @@ void MainWindow::on_shuffle_btn_clicked()
     is_reading=false;
     previous_action=next;
     stage_iteration=false;
-    qDebug()<<"start shuffle";
+    set_all_enabled(true);
+    if (timer.isActive())on_Start_btn_clicked();
+
     if (array)
     {
         delete[] array;
@@ -55,25 +58,18 @@ void MainWindow::on_shuffle_btn_clicked()
     }
     array=Sorting::shuffle(array, size);
 
-    qDebug()<<"end shuffle";
-
-    paintwidget.visualize(size, array, 2,50);
-
+    paintwidget.visualize(size, array);
     create_algo_steps(ui->Algos_combobox->currentText());
 }
 
 void MainWindow::change_display_location()
 {
     QSize display=QApplication::desktop()->screenGeometry().size();
-    if ((this->pos().x()+this->width()>=0.9*display.width())||
-        (this->pos().y()+this->height()>=0.9*display.height())){
-        if (!this->isMaximized())this->move(0,0);
-    }
 
     if ((0.8*display.height())<=this->height())
     {
-        if (!this->isMaximized()) this->move(0,0);//todo set in center of screen(for all)
-        this->showMaximized();
+        //if (!this->isMaximized()) this->move(0,0);//todo set in center of screen(for all)
+        //this->showMaximized();
     }
 }
 
@@ -97,7 +93,7 @@ void MainWindow::create_algo_steps(QString algoname)
         ui->count_items_slider->setMaximum(10);
 
     }
-    else{//correct val
+    else if (algoname!="Bogosort"){//correct val
         QSize display=QApplication::desktop()->screenGeometry().size();
         ui->count_items_spin->setMaximum(qMin(display.width()/2, display.height()-200));
         ui->count_items_slider->setMaximum(qMin(display.width()/2, display.height()-200));
@@ -123,9 +119,7 @@ void MainWindow::nextIteration(int *array)
 void MainWindow::nextIteration(int i, int j, bool swap)
 {
     QTextStream st(&f1);
-    //st<<i<<' '<<j<<' '<<false<<endl;
-    //if (swap)
-        st<<i<<' '<<j<<' '<<swap<<endl;
+    st<<i<<' '<<j<<' '<<swap<<endl;
 }
 
 void MainWindow::stop_writing()
@@ -136,16 +130,34 @@ void MainWindow::stop_writing()
     str=new QTextStream(&f1);
 }
 
+void MainWindow::set_all_enabled(bool enable)
+{
+    ui->back_btn->setEnabled(enable);
+    ui->next_btn->setEnabled(enable);
+}
+
 
 void MainWindow::on_Start_btn_clicked()
 {
     if (timer.isActive()){
         timer.stop();
+        ui->Start_btn->setText("start");
+        set_all_enabled(true);
     }
     else {
-        timer.start(150/ui->AnimSpeed_spin->value());
+        timer.start(static_cast<int>(100.0/ui->AnimSpeed_spin->value()));
+        ui->Start_btn->setText("pause");
+        set_all_enabled(false);
     }
 
+}
+
+void MainWindow::change_speed(int speed)
+{
+    if (timer.isActive()){
+        timer.stop();
+        timer.start(static_cast<int>(100.0/speed));
+    }
 }
 
 
@@ -154,6 +166,8 @@ void MainWindow::on_next_btn_clicked()
 {
     if (!is_reading)stop_writing();
     read_iteration(next);
+    if (!timer.isActive())
+        ui->back_btn->setEnabled(true);
 
 }
 
@@ -161,6 +175,8 @@ void MainWindow::on_back_btn_clicked()
 {
     if (!is_reading)stop_writing();//todo this for start(mb)
     read_iteration(prev);
+    if (!timer.isActive())
+        ui->next_btn->setEnabled(true);
 
 }
 
@@ -205,6 +221,7 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
                     set_line_before(str);
                     *str>>i>>j>>swap;
                     std::swap(array[i], array[j]);
+                    std::swap(i, j);
                     stage_iteration=false;
 
                 }
@@ -212,7 +229,7 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
             else {
                 if (!stage_iteration){//now is looking
                     *str>>i>>j>>swap;
-                    if (swap) std::swap(array[i], array[j]);
+                    if (swap) {std::swap(array[i], array[j]);std::swap(i, j);}
                     else {
                         *str>>i>>j>>swap;stage_iteration=swap;
                         stage_iteration=swap;
@@ -235,17 +252,16 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 
                     set_line_before(str);
                     *str>>i>>j>>swap;
-                    qDebug()<<i<<j<<swap;
                     if (swap) {
 
                         std::swap(array[i], array[j]);
+                        std::swap(i, j);
                         set_line_before(str);str->seek(str->pos()-1);
                     }
                     else {
                         set_line_before(str);
                         set_line_before(str);
                         *str>>i>>j>>swap;
-                        qDebug()<<"new"<<i<<j<<swap;
                         stage_iteration=swap;
                         if (!swap) {set_line_before(str);str->seek(str->pos()-1);}
 
@@ -273,8 +289,8 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 
                     set_line_before(str);
                     *str>>i>>j>>swap;
-                    qDebug()<<"a"<<i<<j<<swap;
                     std::swap(array[i], array[j]);
+                    std::swap(i, j);
                     stage_iteration=false;
                     set_line_before(str);str->seek(str->pos()-1);
                 }
@@ -286,8 +302,13 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 
     previous_action=next_or_prev;
     str->readLine();
-    if (str->atEnd())
+    if (str->pos()<4)
+        ui->back_btn->setEnabled(false);
+    if (str->atEnd()){
+        timer.stop();
+        ui->Start_btn->setText("start");
         ui->next_btn->setEnabled(false);
+    }
 }
 
 void MainWindow::set_line_before(QTextStream *str)

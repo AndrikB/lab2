@@ -35,6 +35,7 @@ private slots:
     void nextIteration(int i, int j, bool swap);
 
     void on_Start_btn_clicked();
+    void change_speed(int);
 
 private:
     Ui::MainWindow *ui;
@@ -57,6 +58,8 @@ private:
     void read_iteration(iteration next_or_prev);
     void set_line_before(QTextStream* str);
     void stop_writing();
+
+    void set_all_enabled(bool enable);
 };
 
 #endif // MAINWINDOW_H
