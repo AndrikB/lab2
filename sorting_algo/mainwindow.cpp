@@ -27,9 +27,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     f1.setFileName("file.txt");
 
-    on_shuffle_btn_clicked();
+    if (!open_old())
+        on_shuffle_btn_clicked();
 
 }
+
+bool MainWindow::open_old()
+{
+    QFile f2("oldFile.txt");
+    if (!f2.open(QFile::ReadOnly)) return false;
+
+    //todo
+    return true;
+}
+
 
 MainWindow::~MainWindow()
 {
@@ -128,6 +139,11 @@ void MainWindow::stop_writing()
     f1.close();
     f1.open(QFile::ReadOnly);
     str=new QTextStream(&f1);
+}
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+    //todo save
 }
 
 void MainWindow::set_all_enabled(bool enable)

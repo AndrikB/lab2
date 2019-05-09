@@ -59,6 +59,9 @@ private:
     void set_line_before(QTextStream* str);
     void stop_writing();
 
+    bool open_old();
+    void closeEvent(QCloseEvent*)override;
+
     void set_all_enabled(bool enable);
 };
 
