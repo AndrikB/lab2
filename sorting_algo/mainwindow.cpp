@@ -18,6 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->Algos_combobox->addItems(sorting.get_algorithms());
     ui->Algos_combobox->setCurrentIndex(0);
+    f1.setFileName("file.txt");
+
+    if (!open_old())
+        on_shuffle_btn_clicked();
+
     connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shuffle_btn_clicked()));
 
     connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
@@ -25,10 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&timer, SIGNAL(timeout()), this, SLOT(on_next_btn_clicked()));
     connect(ui->AnimSpeed_spin, SIGNAL(valueChanged(int)), this, SLOT(change_speed(int)));
 
-    f1.setFileName("file.txt");
-
-    if (!open_old())
-        on_shuffle_btn_clicked();
 
 }
 
@@ -36,8 +37,27 @@ bool MainWindow::open_old()
 {
     QFile f2("oldFile.txt");
     if (!f2.open(QFile::ReadOnly)) return false;
+    QTextStream str(&f2);
+    algName=str.readLine();
+    ui->Algos_combobox->setCurrentText(algName);
+    str>>size;
+    array=new int[static_cast<unsigned long long>(size)];
+    for (int i=0;i<size;i++)
+        str>>array[i];
+    int z;
+    str>>z; stage_iteration=z;
+    str>>z; if (z==0) previous_action=MainWindow::Iteration::next;
+            else previous_action=MainWindow::Iteration::prev;
 
-    //todo
+    str>>iteration;
+
+    stop_writing();
+    for (int i = -1; i < iteration; i++) {
+        this->str->readLine();
+    }
+
+    on_back_btn_clicked();
+    on_next_btn_clicked();
     return true;
 }
 
@@ -54,6 +74,8 @@ void MainWindow::on_shuffle_btn_clicked()
     previous_action=next;
     stage_iteration=false;
     set_all_enabled(true);
+    ui->back_btn->setEnabled(false);
+    iteration=0;write_iteration();
     if (timer.isActive())on_Start_btn_clicked();
 
     if (array)
@@ -70,7 +92,8 @@ void MainWindow::on_shuffle_btn_clicked()
     array=Sorting::shuffle(array, size);
 
     paintwidget.visualize(size, array);
-    create_algo_steps(ui->Algos_combobox->currentText());
+    algName=ui->Algos_combobox->currentText();
+    create_algo_steps(algName);
 }
 
 void MainWindow::change_display_location()
@@ -143,7 +166,19 @@ void MainWindow::stop_writing()
 
 void MainWindow::closeEvent(QCloseEvent *)
 {
-    //todo save
+    QFile f2("oldFile.txt");
+    f2.open(QFile::WriteOnly|QFile::Truncate);
+    QTextStream str(&f2);
+    str<<algName<<endl;
+    str<<size<<endl;
+    for (int i=0;i<size;i++)
+        str<<array[i]<<' ';
+    str<<endl;
+    str<<stage_iteration<<' '<<previous_action<<endl;
+
+    str<<iteration<<endl;
+
+    f2.close();
 }
 
 void MainWindow::set_all_enabled(bool enable)
@@ -176,33 +211,40 @@ void MainWindow::change_speed(int speed)
     }
 }
 
-
+void MainWindow::write_iteration()
+{
+    ui->iteration_lbl->setText("Iteration: "+QString::number(iteration));
+}
 
 void MainWindow::on_next_btn_clicked()
 {
     if (!is_reading)stop_writing();
+
+
     read_iteration(next);
     if (!timer.isActive())
         ui->back_btn->setEnabled(true);
-
+    write_iteration();
 }
 
 void MainWindow::on_back_btn_clicked()
 {
-    if (!is_reading)stop_writing();//todo this for start(mb)
+    if (!is_reading)stop_writing();
+
+
     read_iteration(prev);
     if (!timer.isActive())
         ui->next_btn->setEnabled(true);
-
+    write_iteration();
 }
 
-void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
+void MainWindow::read_iteration(MainWindow::Iteration next_or_prev)//todo
 {
 
-    if (ui->Algos_combobox->currentText()=="Bogosort"){
+    if (algName=="Bogosort"){
         if (next_or_prev==next)
         {
-
+            iteration++;
             for (int i=0;i<size;i++){
                 *str>>array[i];
             }
@@ -211,6 +253,7 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
         }
         else
         {
+            iteration--;
             set_line_before(str);
             set_line_before(str);
             for (int i=0;i<size;i++)
@@ -230,8 +273,9 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
             if (previous_action==next)//++
             {
                 if (!stage_iteration){//now is looking
-                    *str>>i>>j>>swap;
+                    *str>>i>>j>>swap;iteration++;
                     if (swap) stage_iteration=true;
+
                 }
                 else {//now is swaping
                     set_line_before(str);
@@ -244,15 +288,15 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
             }
             else {
                 if (!stage_iteration){//now is looking
-                    *str>>i>>j>>swap;
+                    *str>>i>>j>>swap;iteration++;
                     if (swap) {std::swap(array[i], array[j]);std::swap(i, j);}
                     else {
-                        *str>>i>>j>>swap;stage_iteration=swap;
+                        *str>>i>>j>>swap;iteration++;
                         stage_iteration=swap;
                     }
                 }
                 else {//now is swaping
-                    *str>>i>>j>>swap;
+                    *str>>i>>j>>swap;iteration++;
                     stage_iteration=swap;
                 }
 
@@ -272,23 +316,23 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
 
                         std::swap(array[i], array[j]);
                         std::swap(i, j);
-                        set_line_before(str);str->seek(str->pos()-1);
+                        set_line_before(str);str->seek(str->pos()-1);iteration--;
                     }
                     else {
-                        set_line_before(str);
+                        set_line_before(str);iteration--;
                         set_line_before(str);
                         *str>>i>>j>>swap;
                         stage_iteration=swap;
-                        if (!swap) {set_line_before(str);str->seek(str->pos()-1);}
+                        if (!swap) {set_line_before(str);str->seek(str->pos()-1);iteration--;}
 
                     }
                 }
                 else {
-                    set_line_before(str);
+                    set_line_before(str);iteration--;
                     set_line_before(str);
                     *str>>i>>j>>swap;
                     stage_iteration=swap;
-                    if (!swap) {set_line_before(str);str->seek(str->pos()-1);}
+                    if (!swap) {set_line_before(str);str->seek(str->pos()-1);iteration--;}
 
                 }
 
@@ -299,7 +343,7 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
                     set_line_before(str);
                     *str>>i>>j>>swap;
                     if (swap) stage_iteration=true;
-                    else {set_line_before(str);str->seek(str->pos()-1);}
+                    else {set_line_before(str);str->seek(str->pos()-1);iteration--;}
                 }
                 else {//now is swaping
 
@@ -308,7 +352,7 @@ void MainWindow::read_iteration(MainWindow::iteration next_or_prev)//todo
                     std::swap(array[i], array[j]);
                     std::swap(i, j);
                     stage_iteration=false;
-                    set_line_before(str);str->seek(str->pos()-1);
+                    set_line_before(str);str->seek(str->pos()-1);iteration--;
                 }
 
             }

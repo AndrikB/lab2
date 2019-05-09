@@ -41,10 +41,13 @@ private:
     Ui::MainWindow *ui;
     PaintWidget paintwidget ;
     Sorting sorting;
+    int iteration=0;
+    void write_iteration();
+
 
     int *array=Q_NULLPTR;
     int size;
-    enum iteration{next, prev};
+    enum Iteration{next, prev};
 
 
     QFile f1;
@@ -52,17 +55,23 @@ private:
     bool is_reading=false;//true - it is vizualization
 
     bool stage_iteration=false;//false-look; true - swap
-    iteration previous_action=next;
+    Iteration previous_action=next;
     QTimer timer;
 
-    void read_iteration(iteration next_or_prev);
+    void read_iteration(Iteration next_or_prev);
     void set_line_before(QTextStream* str);
     void stop_writing();
 
-    bool open_old();
-    void closeEvent(QCloseEvent*)override;
 
     void set_all_enabled(bool enable);
+
+    //for open
+    bool open_old();
+    //for close
+    void closeEvent(QCloseEvent*)override;
+    QString algName;
+
+
 };
 
 #endif // MAINWINDOW_H
