@@ -20,10 +20,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->Algos_combobox->setCurrentIndex(0);
     f1.setFileName("file.txt");
 
-    if (!open_old())
-        on_shuffle_btn_clicked();
+
 
     connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shuffle_btn_clicked()));
+
+    if (!open_old())
+        on_shuffle_btn_clicked();
 
     connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
     connect(&sorting, SIGNAL(nextIteration(int, int, bool)), this, SLOT(nextIteration(int, int, bool)));
