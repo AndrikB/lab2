@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     f1.setFileName("file.txt");
 
 
-    if (!open_old())
+    //if (!open_old())
         on_shuffle_btn_clicked();
 
     connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shuffle_btn_clicked()));
@@ -58,7 +58,7 @@ bool MainWindow::open_old()
 
     stop_writing();
     for (int i = -1; i < iteration; i++) {
-
+        if (f1.size()-2>this->str->pos())return false;
         this->str->readLine();
     }
 
