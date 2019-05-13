@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shuffle_btn_clicked()));
 
-    if (!open_old())
+    //if (!open_old())
         on_shuffle_btn_clicked();
 
     connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));

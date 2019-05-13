@@ -58,7 +58,7 @@ void Sorting::BubbleSort(int *numbers,int size)
             break;
         }
     }
-
+    emit nextIteration(-1,-1,0);
 }
 
 void Sorting::BogoSort(int *arr, int size)
@@ -93,16 +93,20 @@ void Sorting::SelectionSort(int *arr, int size)
     {
         int min_pos=i;
         for (int j=i+1;j<size;j++)
+        {
+            emit nextIteration(j,min_pos,0);
             if (arr[j]<arr[min_pos])
             {
                 min_pos=j;
             }
+        }
         if (min_pos>i)
         {
             emit nextIteration(i,min_pos,1);
             swap(arr[i],arr[min_pos]);
         }
     }
+    emit nextIteration(-1,-1,0);
 }
 
 void Sorting::InsertionSort(int *arr, int size)
@@ -120,4 +124,5 @@ void Sorting::InsertionSort(int *arr, int size)
         }
         arr[j+1]=cur;
     }
+    emit nextIteration(-1,-1,0);
 }
