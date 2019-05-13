@@ -21,11 +21,13 @@ MainWindow::MainWindow(QWidget *parent) :
     f1.setFileName("file.txt");
 
 
+    if (!open_old())
+        on_shuffle_btn_clicked();
 
     connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shuffle_btn_clicked()));
 
-    //if (!open_old())
-        on_shuffle_btn_clicked();
+
+
 
     connect(&sorting, SIGNAL(nextIteration(int*)), this, SLOT(nextIteration(int*)));
     connect(&sorting, SIGNAL(nextIteration(int, int, bool)), this, SLOT(nextIteration(int, int, bool)));
@@ -43,6 +45,7 @@ bool MainWindow::open_old()
     algName=str.readLine();
     ui->Algos_combobox->setCurrentText(algName);
     str>>size;
+    if (size<2) return false;
     array=new int[static_cast<unsigned long long>(size)];
     for (int i=0;i<size;i++)
         str>>array[i];
@@ -55,11 +58,13 @@ bool MainWindow::open_old()
 
     stop_writing();
     for (int i = -1; i < iteration; i++) {
+
         this->str->readLine();
     }
 
     on_back_btn_clicked();
     on_next_btn_clicked();
+    ui->count_items_spin->setValue(size);
     return true;
 }
 
@@ -115,18 +120,18 @@ void MainWindow::create_algo_steps(QString algoname)
     f1.open(QFile::WriteOnly|QFile::Truncate);
     f1.putChar('\n');
 
-    if (algoname=="Bogosort"&&ui->count_items_spin->maximum()>10){//becouse bogosort it is joke:))))
+    if (algoname=="Bogosort"&&ui->count_items_spin->maximum()>7){//becouse bogosort it is joke:))))
 
-        if (ui->count_items_spin->value()>10){
-            ui->count_items_spin->setValue(3);
-            ui->count_items_spin->setMaximum(10);
-            ui->count_items_slider->setMaximum(10);
+        if (ui->count_items_spin->value()>7){
+            ui->count_items_spin->setValue(5);
+            ui->count_items_spin->setMaximum(7);
+            ui->count_items_slider->setMaximum(7);
             on_shuffle_btn_clicked();
             on_shuffle_btn_clicked();
             return;
         }
-        ui->count_items_spin->setMaximum(10);
-        ui->count_items_slider->setMaximum(10);
+        ui->count_items_spin->setMaximum(7);
+        ui->count_items_slider->setMaximum(7);
 
     }
     else if (algoname!="Bogosort"){//correct val
@@ -198,7 +203,7 @@ void MainWindow::on_Start_btn_clicked()
         set_all_enabled(true);
     }
     else {
-        timer.start(static_cast<int>(100.0/ui->AnimSpeed_spin->value()));
+        timer.start(static_cast<int>(1000.0/ui->AnimSpeed_spin->value()));
         ui->Start_btn->setText("pause");
         set_all_enabled(false);
     }
@@ -209,7 +214,7 @@ void MainWindow::change_speed(int speed)
 {
     if (timer.isActive()){
         timer.stop();
-        timer.start(static_cast<int>(100.0/speed));
+        timer.start(static_cast<int>(1000.0/speed));
     }
 }
 

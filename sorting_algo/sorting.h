@@ -12,14 +12,14 @@ public:
     static int* shuffle(int *arr,int size);
     QStringList get_algorithms(){return algorithms;}
     void start_sort(QString name_algorithms,const int *arr,int size);
-
+    static bool isSorted(int *arr,int size);
 signals:
     void nextIteration(int i,int j,bool swap);
     void nextIteration(int *arr);
 
 private:
     QStringList algorithms={"Bubble sort","Bogosort","Selection sort","Insertion sort"};
-    bool isSorted(int *arr,int size);
+
 
     //----------sorting algorithms--------------//
     void BubbleSort(int *arr,int size);
