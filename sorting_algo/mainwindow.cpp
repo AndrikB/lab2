@@ -21,9 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     f1.setFileName("file.txt");
 
 
-    //if (!open_old())
-        on_shuffle_btn_clicked();
-
     connect(ui->Algos_combobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(on_shuffle_btn_clicked()));
 
 
@@ -34,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&timer, SIGNAL(timeout()), this, SLOT(on_next_btn_clicked()));
     connect(ui->AnimSpeed_spin, SIGNAL(valueChanged(int)), this, SLOT(change_speed(int)));
 
+    on_shuffle_btn_clicked();
 
 }
 
