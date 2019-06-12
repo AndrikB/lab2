@@ -3,6 +3,9 @@
 #include <QObject>
 #include<QVector>
 #include<QPair>
+#include<utility>
+
+using std::pair;
 
 class Sorting :public QObject
 {
@@ -26,6 +29,8 @@ private:
     void BogoSort(int *arr,int size);
     void SelectionSort(int *arr,int size);
     void InsertionSort(int *arr,int size);
+    void QuickSort(int *arr, int l, int r);
+    pair<int,int> partition(int *arr, int l, int r);
 
 };
 

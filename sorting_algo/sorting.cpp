@@ -4,8 +4,13 @@
 #include<QPair>
 #include<QVector>
 #include<QRandomGenerator>
+#include<utility>
+#include<vector>
 
 using std::swap;
+using std::pair;
+using std::make_pair;
+using std::vector;
 
 Sorting::Sorting()
 {
@@ -32,6 +37,10 @@ void Sorting::start_sort(QString name_algorithms, const int *arr, int size)
     else if (name_algorithms=="Insertion sort")
     {
         InsertionSort(array,size);
+    }
+    else if (name_algorithms=="Quick sort")
+    {
+        QuickSort(array,0,size-1);
     }
 }
 
@@ -125,4 +134,45 @@ void Sorting::InsertionSort(int *arr, int size)
         arr[j+1]=cur;
     }
     emit nextIteration(-1,-1,0);
+}
+
+void Sorting::QuickSort(int *arr, int l, int r)
+{
+    if (l<r)
+    {
+        pair<int,int> q=partition(arr,l,r);
+        QuickSort(arr,l,q.first);
+        QuickSort(arr,q.second,r);
+    }
+}
+
+pair<int,int> Sorting::partition(int *arr, int l, int r)
+{
+    vector<int> a1,a2,a3;//a1 - less than pivot, a2 - equal pivot, a3 - greater than pivot
+    int d=(r-l+1),random_position=rand()%d+l;
+    int m=arr[random_position];
+    for (int i=l;i<=r;i++)
+        if (arr[i]<m) a1.push_back(arr[i]);
+        else if (arr[i]==m) a2.push_back(arr[i]);
+        else a3.push_back(arr[i]);
+    int s1=a1.size(),s2=a2.size(),s3=a3.size();
+    int i=l,j=0;
+    while (j<s1)
+    {
+        arr[i]=a1[j];
+        i++; j++;
+    }
+    j=0;
+    while (j<s2)
+    {
+        arr[i]=a2[j];
+        i++; j++;
+    }
+    j=0;
+    while (j<s3)
+    {
+        arr[i]=a3[j];
+        i++; j++;
+    }
+    return make_pair(l+s1-1,l+s1+s2);
 }
